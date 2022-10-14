@@ -5,26 +5,89 @@ date: "2022-10-13"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+First we will load the packages that we need! 
+
+```{r loading packages}
+library(tidyverse)
+library(ggridges)
+library(p8105.datasets)
+library(skimr)
 ```
 
-## R Markdown
+# Problem 2 
+We need to load and tidy the dataset. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r Accel_data Tidying}
+accel_data = 
+  read_csv(
+    "data/accel_data.csv")%>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute", 
+    names_prefix = "activity_",
+    values_to = "activity"
+    ) %>% 
+  mutate( minute = as.numeric(minute),
+          day_of_the_week = 
+            recode(day,
+                 "Monday" = "Weekday", 
+                 "Tuesday" = "Weekday",
+                 "Wednesday" = "Weekday", 
+                 "Thursday" = "Weekday", 
+                 "Friday"= "Weekday", 
+                 "Saturday" = "Weekend", 
+                 "Sunday"= "Weekend"
+                   )
+  )
 ```
 
-## Including Plots
+### Summary of the `accel_data` dataset
 
-You can also embed plots, for example:
+This is the `accel_data` dataset.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+`r skim(accel_data)`
+
+- It consists of `r nrow(accel_data)` rows and `r ncol(accel_data)` columns. 
+
+- The dataset gives us information on the the day of the exercise, the minute of the day, the activity count, a unique `day_ID` variable for each day, a variable categorizing the days into either weekdays or weekends and the week number. 
+
+### Total Acitivity - Traditional Analysis
+
+Here we have the code chunk to calculate total activity per day, across the different weeks. 
+```{r Total Activity}
+traditional_anal = 
+  accel_data %>% 
+  group_by(week, day) %>%
+  summarise(total_activity = sum(activity)) %>%
+  pivot_wider(
+    names_from = day, 
+    values_from = total_activity
+  ) %>%
+  select("week","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Yes, there are trends that are apparent. I notice that, on average, the total activity during the weekdays is more than that of the weekends. I also find some irregular/potentially wrong data values because in weeks 4 and 5, the total activity on Saturday is extremely low, which ideally should not be the case. 
+
+### Single Panel Plot
+
+```{r, warning=FALSE}
+  accel_data %>%
+  ggplot(aes(x = minute/60, y = activity, color = day))+
+  geom_line(alpha = .5)+ 
+  geom_smooth( aes(group = day,se = FALSE))+ 
+  labs(
+    title = "24-hour Activity Time Courses For Each Day", 
+    x = "Hour", 
+    y = "Activity"
+  )+
+  theme_bw()
+```
+
+What do we say about this????? 
+
+# Problem 3
+
+
+
+
