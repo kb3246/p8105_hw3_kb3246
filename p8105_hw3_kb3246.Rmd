@@ -10,7 +10,6 @@ First we will load the packages that we need!
 ```{r loading packages}
 library(tidyverse)
 library(ggridges)
-library(p8105.datasets)
 library(skimr)
 ```
 
@@ -88,6 +87,43 @@ What do we say about this?????
 
 # Problem 3
 
+First we want to load the package. 
+
+```{r}
+library(p8105.datasets)
+data("ny_noaa")
+```
+
+### Summary of `ny_noaa` dataset
+
+This is the `ny_noaa` dataset. 
+
+`r skim(ny_noaa)`
+
+- It has `r nrow(ny_noaa)` rows and `r ncol(ny_noaa)` columns. 
+
+- The dataset gives us information on precipitation, snow fall, snow depth, maximum and minimum temperatures on a specific day, in New York State. It also gives us information on the weather station ID through which the data was collected. 
+
+- It includes the years 1981 to 2010. 
+
+### Cleaning the dataset 
+
+```{r}
+nyc_weather = 
+  ny_noaa %>%
+  janitor::clean_names() %>%
+  separate(date, into = c("year", "month", "day"), sep = "-", convert = TRUE)%>%
+  mutate(month = month.abb[month], 
+         prcp = prcp*10, 
+         tmax = as.numeric(tmax),
+         tmin = as.numeric(tmin)
+  ) %>% 
+  select(id, day, month, year, everything()) %>% 
+  mutate(
+    tmax = tmax*10,
+    tmin = tmin*10
+    )
+```
 
 
 
