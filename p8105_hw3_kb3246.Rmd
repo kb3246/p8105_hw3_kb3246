@@ -1,5 +1,5 @@
 ---
-title: "Viz and EDA"
+title: "Data Science HW-3"
 author: "Kasturi Bhamidipati"
 date: "2022-10-13"
 output: github_document
@@ -11,6 +11,7 @@ First we will load the packages that we need!
 library(tidyverse)
 library(ggridges)
 library(skimr)
+library(patchwork)
 ```
 
 # Problem 2 
@@ -109,21 +110,52 @@ This is the `ny_noaa` dataset.
 ### Cleaning the dataset 
 
 ```{r}
-nyc_weather = 
+nys_weather = 
   ny_noaa %>%
   janitor::clean_names() %>%
   separate(date, into = c("year", "month", "day"), sep = "-", convert = TRUE)%>%
   mutate(month = month.abb[month], 
-         prcp = prcp*10, 
+         prcp = prcp/10, 
          tmax = as.numeric(tmax),
          tmin = as.numeric(tmin)
   ) %>% 
   select(id, day, month, year, everything()) %>% 
   mutate(
-    tmax = tmax*10,
-    tmin = tmin*10
+    tmax = tmax/10,
+    tmin = tmin/10
     )
 ```
+
+The most commonly observed values for snowfall are 0s. I assume this is because on most days there was no snowfall recorded.
+
+### Two-Panel Plot - Average Max Temp  
+
+```{r}
+two_panel= 
+  nys_weather %>%
+  group_by(id, month, year) %>%
+  filter(month %in% c("Jan","Jul")) %>%
+  summarise(tmax_avg = mean(tmax, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = tmax_avg, colour = id))+
+    geom_point(alpha= .25)+
+    geom_line(alpha= .25)+
+    theme(legend.position = "none")+
+    facet_grid(.~ month)+
+    labs(
+    title = "Average max Temperature in January and July(C)",
+    x = "Year",
+    y = "Average Max Temperature (C)"
+    )
+  
+two_panel
+
+```
+
+#### Observable patterns
+Observable patterns??? 
+
+### Two-Panel Plot - 
+
 
 
 
