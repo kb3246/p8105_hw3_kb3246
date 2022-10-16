@@ -16,10 +16,7 @@ library(p8105.datasets)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
-	warning = FALSE,
-	fig.width = 8, 
-  fig.height = 6,
-  out.width = "90%"
+	warning = FALSE
 )
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -152,7 +149,7 @@ Yes, there are trends that are apparent. I notice that, on average, the total ac
 
 ### Single Panel Plot
 
-```{r single panel plot, warning=FALSE}
+```{r single panel plot, warning=FALSE, dpi=300}
   accel_data %>%
   ggplot(aes(x = minute/60, y = activity, color = day))+
   geom_line(alpha = .30)+ 
@@ -166,7 +163,7 @@ Yes, there are trends that are apparent. I notice that, on average, the total ac
   theme_bw()
 ```
 
-What do we say about this????? 
+From the plot I observed that the individual had maximum activity from 10am to 10pm. Post 10pm, the activity starts to decline, however we see steady activity counts for most part of the day. I also observed that on Friday, Saturday and Sunday, we see some peaks in activity counts. Mostly however, throughout the week, we see a pretty uniform trend in activity, wherein there is more activity during the day (assuming that this is when the individual is awake), and declining acitivity during the night (probably when the individual is asleep).
 
 # Problem 3
 
@@ -211,7 +208,7 @@ The most commonly observed values for snowfall are 0s. I assume this is because 
 
 ### Two-Panel Plot - Average Max Temp  
 
-```{r average max temp}
+```{r average max temp, dpi=300}
 max_temp= 
   nys_weather %>%
   group_by(id, month, year) %>%
@@ -237,12 +234,12 @@ However, we do also have some outliers that I can notice from this graph. This c
 ### Two-Panel Plot - `tmax` vs. `tmin` and Snowfall 
 
 `
-```{r max/min and snow fall}
+```{r max/min and snow fall, dpi=300}
 tmax_tmin_p = 
   nys_weather %>% 
   ggplot(aes(x = tmax, y = tmin))+
   geom_hex()+
-  theme(legend.position = "none")+
+  theme(legend.position = "right")+
   labs(
     title = "tmax vs. tmin",
     x = "tmax (C)",
@@ -253,17 +250,16 @@ tmax_tmin_p =
 snowfall= 
   nys_weather %>% 
   group_by(year) %>%
-  filter(snow %in% (0:100)) %>%
+  filter(snow %in% (1:99)) %>%
   ggplot(aes(x = snow, y = as.factor(year))) + 
   geom_density_ridges()+
   theme(legend.position = "none")+ 
   labs(
-    title = "Distribution of Snowfall(mm) from 1981-2010 in NYS",
+    title = "Distribution of Snowfall (mm) from 1981-2010 in NYS",
     x = "Snowfall (mm)",
     y = "Year"
     )
 
-snowfall
 
 tmax_tmin_p + snowfall
 ```
