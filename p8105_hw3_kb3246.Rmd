@@ -143,6 +143,8 @@ traditional_anal =
     values_from = total_activity
   ) %>%
   select("week","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+
+traditional_anal
 ```
 
 Yes, there are trends that are apparent. I notice that, on average, the total activity during the weekdays is more than that of the weekends. I also find some irregular/potentially wrong data values because in weeks 4 and 5, the total activity on Saturday is extremely low, which ideally should not be the case. 
@@ -228,7 +230,8 @@ max_temp
 
 ```
 
-From the plots, I observe that there are lower average maximum temperature in January than in July. 
+From the plots, I observe that there are lower average maximum temperature in January than in July. This obviously makes sense, since in New York State, the winters fall in January, while July is a summer month. 
+
 However, we do also have some outliers that I can notice from this graph. This could be because some of the weather stations reporter unusually lower/higher average maximum temperatures at some point during the years that were included in this dataset. 
 
 ### Two-Panel Plot - `tmax` vs. `tmin` and Snowfall 
